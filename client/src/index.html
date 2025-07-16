@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter une dépense</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Ajouter une dépense</h2>
+  <form id="depenseForm">
+    <input type="text" id="titre" placeholder="Titre" required />
+    <input type="number" id="montant" placeholder="Montant" required />
+    <select id="categorie" required>
+      <option value="">-- Catégorie --</option>
+      <option value="Alimentation">Alimentation</option>
+      <option value="Transport">Transport</option>
+      <option value="Loisir">Loisir</option>
+    </select>
+    <input type="date" id="date" required />
+    <button type="submit">Ajouter dépense</button>
+  </form>
+  <div id="message"></div>
+
+  <script>
+    const form = document.getElementById('depenseForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        titre: document.getElementById('titre').value,
+        montant: parseFloat(document.getElementById('montant').value),
+        categorie: document.getElementById('categorie').value,
+        date: document.getElementById('date').value,
+      };
+
+      try {
+        const response = await fetch('A', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          messageDiv.textContent = "✅ " + result.message;
+          form.reset();
+        } else {
+          messageDiv.textContent = "❌ Erreur : " + result.message;
+        }
+      } catch (err) {
+        messageDiv.textContent = "❌ Exception : " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
